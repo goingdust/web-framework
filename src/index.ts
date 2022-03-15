@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { User } from './models/User';
 
+const dbUrl = process.env.DB_URL;
 const user = new User({ name: 'myname', age: 20 });
 
 user.on('change', () => {
@@ -15,7 +16,7 @@ user.on('save', () => {
 
 user.trigger('save');
 
-axios.post(`${process.env.DB_URL}/users`, {
+axios.post(`${dbUrl}/users`, {
 	name: 'myname',
 	age: 20,
 });
