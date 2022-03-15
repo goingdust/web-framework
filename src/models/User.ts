@@ -1,4 +1,9 @@
+import axios, { AxiosResponse } from 'axios';
+
+const dbUrl = process.env.DB_URL;
+
 interface UserProps {
+	id?: number;
 	name?: string;
 	age?: number;
 }
@@ -10,7 +15,7 @@ export class User {
 
 	constructor(private data: UserProps) {}
 
-	get(propName: 'name' | 'age'): string | number {
+	get(propName: 'id' | 'name' | 'age'): string | number {
 		return this.data[propName] || 'No data saved';
 	}
 
@@ -30,5 +35,11 @@ export class User {
 			return;
 		}
 		handlers.forEach(callback => callback());
+	}
+
+	fetch(): void {
+		axios
+			.get(`${dbUrl}/users/${this.get('id')}`)
+			.then((res: AxiosResponse): void => this.set(res.data));
 	}
 }
