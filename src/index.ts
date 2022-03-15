@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { User } from './models/User';
 
 const user = new User({ name: 'myname', age: 20 });
@@ -13,3 +14,8 @@ user.on('save', () => {
 });
 
 user.trigger('save');
+
+axios.post(`${process.env.DB_URL}/users`, {
+	name: 'myname',
+	age: 20,
+});

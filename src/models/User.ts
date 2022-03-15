@@ -11,7 +11,7 @@ export class User {
 	constructor(private data: UserProps) {}
 
 	get(propName: 'name' | 'age'): string | number {
-		return this.data[propName];
+		return this.data[propName] || 'No data saved';
 	}
 
 	set(update: UserProps): void {
