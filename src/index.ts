@@ -15,8 +15,3 @@ user.on('save', () => {
 });
 
 user.trigger('save');
-
-axios.post(`${dbUrl}/users`, {
-	name: 'myname',
-	age: 20,
-});
