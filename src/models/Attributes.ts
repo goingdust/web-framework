@@ -5,7 +5,11 @@ export class Attributes<T> {
 		return this.data[key];
 	};
 
-	set(update: T): void {
+	set = (update: T): void => {
 		this.data = { ...this.data, ...update };
-	}
+	};
+
+	getAll = (): T => {
+		return this.data;
+	};
 }
