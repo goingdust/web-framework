@@ -10,6 +10,7 @@ export interface UserProps {
 
 export class User {
 	events: Eventing = new Eventing();
+	sync: Sync<UserProps> = new Sync<UserProps>(`${dbUrl}/users`);
 
 	constructor(private data: UserProps) {}
 
