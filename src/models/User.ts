@@ -1,4 +1,5 @@
 import { Eventing } from './Eventing';
+import { Sync } from './Sync';
 const dbUrl = process.env.DB_URL;
 
 export interface UserProps {
