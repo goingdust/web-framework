@@ -1,6 +1,7 @@
 import { Eventing } from './Eventing';
+const dbUrl = process.env.DB_URL;
 
-interface UserProps {
+export interface UserProps {
 	id?: number;
 	name?: string;
 	age?: number;

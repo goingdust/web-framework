@@ -1,19 +1,19 @@
-import axios, { AxiosResponse } from 'axios';
-const dbUrl = process.env.DB_URL;
+import axios, { AxiosPromise } from 'axios';
+import { UserProps } from './User';
 
 export class Sync {
-	fetch(): void {
-		axios
-			.get(`${dbUrl}/users/${this.get('id')}`)
-			.then((res: AxiosResponse): void => this.set(res.data));
+	constructor(private rootUrl: string) {}
+
+	fetch(id: number): AxiosPromise {
+		return axios.get(`${this.rootUrl}/${id}`);
 	}
 
-	save(): void {
-		const id = this.get('id');
-		if (id && id !== 'No data saved') {
-			axios.put(`${dbUrl}/users/${id}`, this.data);
+	save(data: UserProps): AxiosPromise {
+		const { id } = data;
+		if (id) {
+			return axios.put(`${this.rootUrl}/${id}`, data);
 		} else {
-			axios.post(`${dbUrl}/users`, this.data);
+			return axios.post(this.rootUrl, data);
 		}
 	}
 }
