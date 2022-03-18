@@ -1,54 +1,61 @@
-import axios, { AxiosResponse } from 'axios';
-
+import { AxiosResponse } from 'axios';
+import { Attributes } from './Attributes';
+import { Eventing } from './Eventing';
+import { Sync } from './Sync';
 const dbUrl = process.env.DB_URL;
 
-interface UserProps {
+export interface UserProps {
 	id?: number;
 	name?: string;
 	age?: number;
 }
 
-type Callback = () => void;
-
 export class User {
-	events: { [key: string]: Callback[] } = {};
+	events: Eventing = new Eventing();
+	sync: Sync<UserProps> = new Sync<UserProps>(`${dbUrl}/users`);
+	attributes: Attributes<UserProps>;
 
-	constructor(private data: UserProps) {}
+	constructor(attrs: UserProps) {
+		this.attributes = new Attributes<UserProps>(attrs);
+	}
 
-	get(propName: 'id' | 'name' | 'age'): string | number {
-		return this.data[propName] || 'No data saved';
+	get on() {
+		return this.events.on;
+	}
+
+	get trigger() {
+		return this.events.trigger;
+	}
+
+	get get() {
+		return this.attributes.get;
 	}
 
 	set(update: UserProps): void {
-		this.data = { ...this.data, ...update };
-	}
-
-	on(eventName: string, callback: Callback): void {
-		const handlers = this.events[eventName] || [];
-		handlers.push(callback);
-		this.events[eventName] = handlers;
-	}
-
-	trigger(eventName: string): void {
-		const handlers = this.events[eventName];
-		if (!handlers || handlers.length === 0) {
-			return;
-		}
-		handlers.forEach(callback => callback());
+		this.attributes.set(update);
+		this.events.trigger('change');
 	}
 
 	fetch(): void {
-		axios
-			.get(`${dbUrl}/users/${this.get('id')}`)
-			.then((res: AxiosResponse): void => this.set(res.data));
+		const id = this.get('id');
+		if (typeof id !== 'number') {
+			throw new Error('Cannot fetch without an id');
+		}
+
+		this.sync
+			.fetch(id)
+			.then((res: AxiosResponse): void => {
+				this.set(res.data);
+			})
+			.catch(() => this.trigger('error'));
 	}
 
 	save(): void {
-		const id = this.get('id');
-		if (id && id !== 'No data saved') {
-			axios.put(`${dbUrl}/users/${id}`, this.data);
-		} else {
-			axios.post(`${dbUrl}/users`, this.data);
-		}
+		this.sync
+			.save(this.attributes.getAll())
+			.then((res: AxiosResponse): void => {
+				this.trigger('save');
+			})
+			.catch(() => this.trigger('error'));
 	}
 }
