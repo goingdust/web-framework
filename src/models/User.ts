@@ -1,7 +1,5 @@
-import { AxiosResponse } from 'axios';
-import { Attributes } from './Attributes';
-import { Eventing } from './Eventing';
-import { Sync } from './Sync';
+import { Model } from './Model';
+
 const dbUrl = process.env.DB_URL;
 
 export interface UserProps {
@@ -10,12 +8,4 @@ export interface UserProps {
 	age?: number;
 }
 
-export class User {
-	events: Eventing = new Eventing();
-	sync: Sync<UserProps> = new Sync<UserProps>(`${dbUrl}/users`);
-	attributes: Attributes<UserProps>;
-
-	constructor(attrs: UserProps) {
-		this.attributes = new Attributes<UserProps>(attrs);
-	}
-}
+export class User extends Model<UserProps> {}
