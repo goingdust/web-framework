@@ -1,5 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
+import { Collection } from './models/Collection';
 
-axios
-	.get(`${process.env.DB_URL}/users`)
-	.then((res: AxiosResponse) => console.log(res.data));
+const collection = new Collection(`${process.env.DB_URL}/users`);
+
+collection.on('change', () => {
+	console.log(collection);
+});
+
+collection.fetch();
