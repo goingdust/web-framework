@@ -1,9 +1,5 @@
-import { User } from './models/User';
+import axios, { AxiosResponse } from 'axios';
 
-const user = User.buildUser({ id: 1 });
-
-user.on('change', () => {
-	console.log(user);
-});
-
-user.fetch();
+axios
+	.get(`${process.env.DB_URL}/users`)
+	.then((res: AxiosResponse) => console.log(res.data));
